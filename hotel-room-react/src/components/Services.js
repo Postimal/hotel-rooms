@@ -8,22 +8,22 @@ export default class Services extends Component {
           {
               icon:<FaCocktail/>,
               title:'free cocktails',
-              info:'lorem impsum kla mea lke'
+              info:'lorem impsum kla mea lke, indo doro facial'
           },
           {
             icon:<FaHiking/>,
             title:'endless hiking',
-            info:'lorem impsum kla mea lke'
+            info:'lorem impsum kla mea lke, indo doro facial'
           },
           {
             icon:<FaShuttleVan/>,
             title:'free shuttle',
-            info:'lorem impsum kla mea lke'
+            info:'lorem impsum kla mea lke, indo doro facial'
           },
           {
             icon:<FaBeer/>,
             title:'strongest beer',
-            info:'lorem impsum kla mea lke'
+            info:'lorem impsum kla mea lke, indo doro facial'
           }
         ]
     }

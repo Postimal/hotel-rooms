@@ -1,5 +1,6 @@
-import React, { Component } from "react";
-import items from "./data";
+import React, { Component } from 'react';
+import items from './data';
+import Client from './Contentful';
 
 const RoomContext = React.createContext();
 
@@ -9,7 +10,7 @@ class RoomProvider extends Component {
     sortedRooms: [],
     featuredRooms: [],
     loading: true,
-    type: "all",
+    type: 'all',
     capacity: 1,
     price: 0,
     minPrice: 0,
@@ -17,26 +18,36 @@ class RoomProvider extends Component {
     minSize: 0,
     maxSize: 0,
     breakfast: false,
-    pets: false
+    pets: false,
   };
-  // getData
+
+  getData = async () => {
+    try {
+      let response = await Client.getEntries({
+        content_type: 'beachResortRoom',
+        order: 'sys.createdAt',
+      });
+      console.log(response);
+      let rooms = this.formatData(response.items);
+      let featuredRooms = rooms.filter(room => room.featured);
+      let maxPrice = Math.max(...rooms.map(room => room.price));
+      let maxSize = Math.max(...rooms.map(room => room.size));
+      this.setState({
+        rooms,
+        featuredRooms,
+        sortedRooms: rooms,
+        loading: false,
+        price: maxPrice,
+        maxPrice,
+        maxSize,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   componentDidMount() {
-    // this.getData
-    let rooms = this.formatData(items);
-    // console.log(rooms);
-    let featuredRooms = rooms.filter(room => room.featured);
-    let maxPrice = Math.max(...rooms.map(room => room.price));
-    let maxSize = Math.max(...rooms.map(room => room.size));
-    this.setState({
-      rooms,
-      featuredRooms,
-      sortedRooms: rooms,
-      loading: false,
-      price: maxPrice,
-      maxPrice,
-      maxSize
-    });
+    this.getData();
   }
 
   formatData(items) {
@@ -58,14 +69,16 @@ class RoomProvider extends Component {
   handleChange = event => {
     const target = event.target;
     const value =
-      event.type === "checkbox" //dodalismy warunek dlatego ze jest checkbox. z lewej strony jest rozbite na czesci pierwsze nizej w setState w calosci
+      event.type === 'checkbox' //dodalismy warunek dlatego ze jest checkbox. z lewej strony jest rozbite na czesci pierwsze nizej w setState w calosci
         ? target.checked
         : target.value;
 
     this.setState(
       {
         [event.target.name]:
-          target.type === "checkbox" ? event.target.checked : event.target.value
+          target.type === 'checkbox'
+            ? event.target.checked
+            : event.target.value,
       },
       this.filterRooms
     );
@@ -81,16 +94,16 @@ class RoomProvider extends Component {
       minSize,
       maxSize,
       breakfast,
-      pets
+      pets,
     } = this.state;
-    console.log("filterin at the moment");
+    console.log('filterin at the moment');
     // all the rooms
     let tempRooms = [...rooms];
     // transform values
     capacity = parseInt(capacity);
     price = parseInt(price);
     // filter by type
-    if (type !== "all") {
+    if (type !== 'all') {
       tempRooms = tempRooms.filter(room => room.type === type); // warunek dany aby moc wyswietlic 'all' bez niego nie mozna było tego uzyskac
     }
 
@@ -127,7 +140,7 @@ class RoomProvider extends Component {
         value={{
           ...this.state,
           getRoom: this.getRoom,
-          handleChange: this.handleChange
+          handleChange: this.handleChange,
         }}
       >
         {this.props.children}
